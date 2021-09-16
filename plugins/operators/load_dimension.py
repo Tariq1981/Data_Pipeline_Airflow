@@ -32,7 +32,7 @@ class LoadDimensionOperator(BaseOperator):
         if self.load_mode == "overwrite" or self.load_mode == "append":
             formatted_sql = LoadDimensionOperator.sql_insert.format(self.table,self.sql_select)
             redshift.run(formatted_sql)
-            logging.info(f"Table {self.table} has been loaded !!!")
+            logging.info(f"Dimension table {self.table} has been loaded !!!")
         else:
             logging.error(f"Invalid load_mode {self.load_mode} !!!")
             raise ValueError(f"Invalid load_mode {self.load_mode} !!!")
