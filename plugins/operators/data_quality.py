@@ -10,18 +10,21 @@ class DataQualityOperator(BaseOperator):
     def __init__(self,
                  redshift_conn_id="",
                  sql_test_stmt=[],
-                 sql_test_result=[],
+                 sql_test_conditions=[], ## example: ["{} > 0","{} == 0"]
                  *args, **kwargs):
 
         super(DataQualityOperator, self).__init__(*args, **kwargs)
         self.redshift_conn_id = redshift_conn_id
+        self.sql_test_stmt = sql_test_stmt
+        self.sql_test_conditions = sql_test_conditions
 
     def execute(self, context):
         failed_count = 0
         redshift_hook = PostgresHook(self.redshift_conn_id)
         for i in range(0,len(self.sql_test_stmt)):
             records = redshift_hook.get_records(self.sql_test_stmt[i])
-            if len(records) < 1 or len(records[0]) != self.sql_test_result[i]:
+            condition = eval(self.sql_test_conditions[i].format(records[0]))
+            if len(records) < 1 or not(condition):
                 failed_count += 1
                 
         if failed_count > 0:

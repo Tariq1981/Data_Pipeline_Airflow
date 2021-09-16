@@ -36,7 +36,7 @@ stage_events_to_redshift = StageToRedshiftOperator(
 stage_songs_to_redshift = StageToRedshiftOperator(
     task_id='Stage_songs',
     redshift_conn_id="redshift",
-    table="staging_events",
+    table="staging_songs",
     s3_file_path="s3://udacity-dend/song_data",
     s3_iamrole="arn:aws:iam::993373426926:role/dwhRole",
     s3_dummy_con_id="s3_dummy",
@@ -45,31 +45,52 @@ stage_songs_to_redshift = StageToRedshiftOperator(
 
 load_songplays_table = LoadFactOperator(
     task_id='Load_songplays_fact_table',
+    redshift_conn_id="redshift",
+    table="songplays",
+    sql_select=SqlQueries.songplay_table_insert,
     dag=dag
 )
 
 load_user_dimension_table = LoadDimensionOperator(
     task_id='Load_user_dim_table',
+    redshift_conn_id="redshift",
+    table="users",
+    load_mode="overwrite",
+    sql_select=SqlQueries.user_table_insert,
     dag=dag
 )
 
 load_song_dimension_table = LoadDimensionOperator(
     task_id='Load_song_dim_table',
+    redshift_conn_id="redshift",
+    table="songs",
+    load_mode="overwrite",
+    sql_select=SqlQueries.song_table_insert,
     dag=dag
 )
 
 load_artist_dimension_table = LoadDimensionOperator(
     task_id='Load_artist_dim_table',
+    redshift_conn_id="redshift",
+    table="artists",
+    load_mode="overwrite",
+    sql_select=SqlQueries.artist_table_insert,
     dag=dag
 )
 
 load_time_dimension_table = LoadDimensionOperator(
     task_id='Load_time_dim_table',
+    redshift_conn_id="redshift",
+    table="time",
+    load_mode="overwrite",
+    sql_select=SqlQueries.time_table_insert,
     dag=dag
 )
 
 run_quality_checks = DataQualityOperator(
     task_id='Run_data_quality_checks',
+    sql_test_stmt=["SELECT COUNT(*) FRO public.artists"],
+    sql_test_conditions=["{} > 0"],
     dag=dag
 )
 
