@@ -19,7 +19,7 @@ class StageToRedshiftOperator(BaseOperator):
                  s3_file_path="",
                  s3_iamrole="",
                  s3_dummy_con_id="", # Dummy AWS connection in order to user IAM role instead of the key and secret key
-                 json_load_type="auto"
+                 json_load_type="auto",
                  *args, **kwargs):
 
         super(StageToRedshiftOperator, self).__init__(*args, **kwargs)
