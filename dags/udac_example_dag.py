@@ -24,11 +24,22 @@ start_operator = DummyOperator(task_id='Begin_execution',  dag=dag)
 
 stage_events_to_redshift = StageToRedshiftOperator(
     task_id='Stage_events',
+    redshift_conn_id="redshift",
+    table="staging_events",
+    s3_file_path="s3://udacity-dend/log_data",
+    s3_iamrole="arn:aws:iam::993373426926:role/dwhRole",
+    s3_dummy_con_id="s3_dummy", 
+    json_load_type="s3://udacity-dend/log_json_path.json",
     dag=dag
 )
 
 stage_songs_to_redshift = StageToRedshiftOperator(
     task_id='Stage_songs',
+    redshift_conn_id="redshift",
+    table="staging_events",
+    s3_file_path="s3://udacity-dend/song_data",
+    s3_iamrole="arn:aws:iam::993373426926:role/dwhRole",
+    s3_dummy_con_id="s3_dummy",
     dag=dag
 )
 
