@@ -22,6 +22,6 @@ class LoadFactOperator(BaseOperator):
     def execute(self, context):
         redshift_hook = PostgresHook(self.redshift_conn_id)
         formatted_sql = LoadFactOperator.sql_insert.format(self.table,self.sql_select)
-        redshift.run(formatted_sql)
-        logging.info(f"Fact table {self.table} has been loaded !!!")
+        redshift_hook.run(formatted_sql)
+        self.log.info(f"Fact table {self.table} has been loaded !!!")
         

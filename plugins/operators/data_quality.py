@@ -23,14 +23,17 @@ class DataQualityOperator(BaseOperator):
         redshift_hook = PostgresHook(self.redshift_conn_id)
         for i in range(0,len(self.sql_test_stmt)):
             records = redshift_hook.get_records(self.sql_test_stmt[i])
-            condition = eval(self.sql_test_conditions[i].format(records[0]))
-            if len(records) < 1 or not(condition):
+            if len(records) < 1 or len(records[0]) < 1:
                 failed_count += 1
+            else:
+                condition = eval(self.sql_test_conditions[i].format(records[0][0]))
+                if not(condition):
+                    failed_count += 1
                 
         if failed_count > 0:
-            logging.error(f"There are (failed_counts) failed test cases")
+            self.log.error(f"There are (failed_counts) failed test cases")
             raise ValueError(f"Data quality check failed. {self.table} returned no results")
         
-        logging.info(f"All tests cases have passed !!!")
+        self.log.info(f"All tests cases have passed !!!")
         
         

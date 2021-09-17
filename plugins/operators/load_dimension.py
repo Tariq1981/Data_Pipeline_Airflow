@@ -27,14 +27,14 @@ class LoadDimensionOperator(BaseOperator):
         if self.load_mode == "truncate" or self.load_mode == "overwrite":
             self.log.info(f"Clearing data from destination Redshift table {self.table}")
             formatted_sql = LoadDimensionOperator.sql_delete.format(self.table)
-            redshift.run(formatted_sql)
+            redshift_hook.run(formatted_sql)
         
         if self.load_mode == "overwrite" or self.load_mode == "append":
             formatted_sql = LoadDimensionOperator.sql_insert.format(self.table,self.sql_select)
-            redshift.run(formatted_sql)
-            logging.info(f"Dimension table {self.table} has been loaded !!!")
+            redshift_hook.run(formatted_sql)
+            self.log.info(f"Dimension table {self.table} has been loaded !!!")
         else:
-            logging.error(f"Invalid load_mode {self.load_mode} !!!")
+            self.log.error(f"Invalid load_mode {self.load_mode} !!!")
             raise ValueError(f"Invalid load_mode {self.load_mode} !!!")
             
         
